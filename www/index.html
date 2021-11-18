@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="components/loader.css">
     <link rel="stylesheet" href="css/style.css">
     <script src="keys.js"></script>
+    <table id="targetTable">
+        <tr><th>message</th><th>Update Date</th></tr>
     <script>
     // NCMB アクセスの準備
     var ncmb = new NCMB(appKey, clientKey);
@@ -40,21 +42,32 @@
        $("#message").html(data + ":" + update);
       })
     }
-
     function fetchAll() {
+      let table = document.getElementById('targetTable');
       var TestClass = ncmb.DataStore("FetchTest");
       TestClass.fetchAll()
       .then(function(results) {
         var msg;
         for(let i = 0; i < results.length; i++) {
+          let newRow = table.insertRow();
+          let newCell = newRow.insertCell();
+          let newText = document.createTextNode(results[i].get("text"));
+          newCell.appendChild(newText);
+
+          newCell = newRow.insertCell();
+          newText = document.createTextNode(results[i].get("updateDate"));
+          newCell.appendChild(newText);
           var data = results[i].get("text");
           var update = results[i].get("updateDate");
-          msg += data + ":" + update;
+          msg += data + ":" + update + "<br>";
         }
-       $("#message").html(msg + "  ");
+       $("#message").html(msg);
+       
       })
     }
+    
     </script>
+    </table>
 </head>
 <body>
   <h1>mBaaS fetch</h1>
@@ -67,7 +80,6 @@
     <button id = "btnB" class="btn" onclick="fetch()">Fetch</button>
     <button id = "btnC" class="btn" onclick="fetchAll()">Fetch All</button>
   </div>
-
   <div id="message">message area</div>
 </body>
 </html>
